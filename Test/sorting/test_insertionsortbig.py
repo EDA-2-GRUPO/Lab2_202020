@@ -31,13 +31,9 @@ import csv
 list_type = 'SINGLE_LINKED'
 
 lst_books = lt.newList(list_type)
-booksfile = cf.data_dir + 'GoodReads/books.csv'
+booksfile = cf.data_dir.replace('\\',"/") + 'GoodReads/books.csv'
 
 
-def setUp():
-    print('Loading books')
-    loadCSVFile(booksfile, lst_books)
-    print(lst_books['size'])
 
 
 def tearDown():
@@ -48,6 +44,11 @@ def loadCSVFile(file, lst):
     input_file = csv.DictReader(open(file, encoding = "utf-8"))
     for row in input_file:
         lt.addLast(lst, row)
+
+print('Loading books')
+print(222222222,cf.data_dir.replace('\\',"/"))
+loadCSVFile(booksfile, lst_books)
+print(lst_books['size'])
 
 def printList(lst):
     iterator = it.newIterator(lst)
@@ -71,7 +72,6 @@ def test_loading_CSV_y_ordenamiento():
     """
     Prueba que se pueda leer el archivo y que despues de relizar el sort, el orden este correcto
     """
-    setUp()
     sort.insertionSort(lst_books,less)
     while not (lt.isEmpty(lst_books)):
         x = int(lt.removeLast(lst_books)['goodreads_book_id'])

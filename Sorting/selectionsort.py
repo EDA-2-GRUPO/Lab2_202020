@@ -34,3 +34,21 @@ def selectionSort (lst, lessfunction):
             pos2 += 1
         lt.exchange (lst, pos1, minimum)  # se intercambia el elemento más pequeño hasta ese punto con el elemento en pos1
         pos1 += 1
+
+def selectionSort_n_rank(lst, lessfunction, n_rank):
+    size = lt.size(lst)
+    pos1 = 1
+    rank = lt.newList()
+    for i in range(n_rank):
+        minimum = pos1  # minimun tiene el menor elemento conocido hasta ese momento
+        pos2 = pos1 + 1
+        while (pos2 <= size):
+            if (lessfunction (lt.getElement(lst, pos2),lt.getElement(lst, minimum))):
+                minimum = pos2      # minimum se actualiza con la posición del nuevo elemento más pequeño
+            pos2 += 1
+        lt.exchange (lst, pos1, minimum) # se intercambia el elemento más pequeño hasta ese punto con el elemento en pos1
+
+        lt.addLast(rank,lt.getElement(lst, i))
+        pos1 += 1
+
+    return rank

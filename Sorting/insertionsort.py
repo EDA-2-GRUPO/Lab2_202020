@@ -19,16 +19,49 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  """
 
-
 import config as cf
 from ADT import list as lt
+from DataStructures import listiterator as it
 
-def insertionSort (lst, lessfunction): 
-    size =  lt.size(lst) 
+
+def insertionSort(lst, lessfunction):
+    size = lt.size(lst)
     pos1 = 1
     while pos1 <= size:
         pos2 = pos1
-        while (pos2 >1) and (lessfunction (lt.getElement(lst, pos2),lt.getElement(lst, pos2-1))):
-            lt.exchange (lst, pos2, pos2-1)
+        while (pos2 > 1) and (lessfunction(lt.getElement(lst, pos2), lt.getElement(lst, pos2 - 1))):
+            lt.exchange(lst, pos2, pos2 - 1)
             pos2 -= 1
         pos1 += 1
+
+
+def insertion_rank_mod(lst, lessfunction, n_rank):
+    pos_list = 1
+    rank = lt.newList('ARRAY_LIST')
+
+    iterator_lst = it.newIterator(lst)
+    element = it.next(iterator_lst)
+    lt.addLast(rank, element)
+
+    while it.hasNext(iterator_lst):
+        pos_rank = n_rank + 1
+        if lt.size(rank) < n_rank:
+            pos_rank = lt.size(rank) + 1
+        in_rank, continuo = False, True
+        element = it.next(iterator_lst)
+        while pos_rank > 1 and continuo:
+            if lessfunction(element, lt.getElement(rank, pos_rank - 1)):
+                in_rank = True
+                pos_rank -= 1
+            else:
+                continuo = False
+
+        if in_rank and (not continuo or pos_rank == 1):
+            lt.insertElement(rank, element, pos_rank)
+            if lt.size(rank) > n_rank:
+                lt.removeLast(rank)
+        pos_list += 1
+
+    return rank
+
+lt.newList()

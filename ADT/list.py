@@ -220,7 +220,8 @@ def removeFirst (lst):
 
 def removeLast (lst):
     """ Remueve el último elemento de la lista.
-    
+
+
     Elimina el último elemento de la lista  y lo retorna en caso de existir. El tamaño de la lista se decrementa en 1. 
     Si la lista es vacía  retorna None.
 
