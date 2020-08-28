@@ -24,22 +24,23 @@
 """
   Este módulo es una aplicación básica con un menú de opciones para cargar datos, contar elementos, y hacer búsquedas sobre una lista .
 """
+
+# sorting
+
+# estructuras
+from DataStructures import liststructure as list_a
+from time import process_time
+from DataStructures import listiterator as it
+from ADT import list as lt
 import config as cf
 import sys
 import csv
-
-# sorting
-from Sorting.insertionsort import insertionSort
+from Sorting.insertionsort import insertion_rank_mod as insertionSort
 from Sorting.mergesort import mergesort
 from Sorting.quicksort import quickSort
-from Sorting.selectionsort import selectionSort
+from Sorting.selectionsort import selectionSort_n_rank as selectionSort
 from Sorting.shellsort import shellSort
 
-# estructuras
-from ADT import list as lt
-from DataStructures import listiterator as it
-from time import process_time
-from DataStructures import liststructure as list_a
 
 
 def loadCSVFile(file, tipo_lista, sep=";"):
@@ -111,7 +112,8 @@ def countElementsFilteredByColumn(criteria, column, lst):
         iterator = it.newIterator(lst)
         while it.hasNext(iterator):
             element = it.next(iterator)
-            if criteria.lower() in element[column].lower():  # filtrar por palabra clave
+            # filtrar por palabra clave
+            if criteria.lower() in element[column].lower():
                 counter += 1
         t1_stop = process_time()  # tiempo final
         print("Tiempo de ejecución ", t1_stop - t1_start, " segundos")
@@ -125,7 +127,7 @@ def countElementsByCriteria(criteria, column, lst):
     return 0
 
 
-def orderElementsByCriteria(function, column: str, lst, orden):
+def orderElementsByCriteria(function, column: str, lst, orden, n_rank):
     """
     Retorna una lista con cierta cantidad de elementos ordenados por el criterio
     function:
@@ -145,10 +147,9 @@ def orderElementsByCriteria(function, column: str, lst, orden):
     def less_funtionnat(element1, element2):
         return orden(float(element1[column]), float(element2[column]))
 
-    function(lst, less_funtionnat)
+    ord = function(lst, less_funtionnat, n_rank)
 
-    return lst
-
+    return ord
 
 def main():
     """
@@ -161,43 +162,49 @@ def main():
     lista_casting = lt.newList()  # se require usar lista definida
     lista_details = lt.newList()
     while True:
-        printMenu()  # imprimir el menu de opciones en consola
-        inputs = input('Seleccione una opción para continuar\n')  # leer opción ingresada
-        if len(inputs) > 0:
 
+        printMenu()  # imprimir el menu de opciones en consola
+        # leer opción ingresada
+        inputs = input('Seleccione una opción para continuar\n')
+
+        if len(inputs) > 0:
             if int(inputs[0]) == 1:  # opcion 1
                 file = "../Data/Movies/SmallMoviesDetailsCleaned.csv"
-                tipo_lista = input("Ingrese el tipo de lista que quiere usar, 0 linked, 1 array: ")
+                tipo_lista = input(
+                    "Ingrese el tipo de lista que quiere usar, 0 linked, 1 array: ")
                 if tipo_lista == "1":
                     tipo_lista = "ARRAY_LIST"
                 if tipo_lista == "2":
                     tipo_lista = "SINGLE_LINKED"
-                valido = False
-                C1 = input("¿Que archivos desea cargar? 1: prueba, 2: completos")
+                valido = True
+                C1 = input(
+                    "¿Que archivos desea cargar? 1: prueba, 2: completos")
                 if C1 == "1":
                     file_detail = "../Data/Movies/SmallMoviesDetailsCleaned.csv"
                     file_cast = "../Data/Movies/MoviesCastingRaw-small.csv"
-                    valido = True
+
                 elif int(C1) == 2:
                     file_detail = "../Data/Movies/AllMoviesDetailsCleaned.csv"
                     file_cast = "../Data/Movies/AllMoviesCastingRaw.csv"
-                    valido = True
                 else:
+                    valido = False
                     print("Opcion invalida")
 
                 if valido:
                     c1_1 = input("Datos del elenco? 0 o 1: ")
                     if c1_1 == "1":
-                        print(file_cast,lista_casting)
+                        print(file_cast, lista_casting)
                         # llamar funcion cargar datos
                         lista_casting = loadCSVFile(file_cast, tipo_lista)
-                        print("Datos cargados, " + str(lt.size(lista_casting)) + " elementos cargados")
+                        print("Datos cargados, " +
+                              str(lt.size(lista_casting)) + " elementos cargados")
                         # llamar funcion cargar datos
                     c1_2 = input("Datos de la pelicula? 0 o 1: ")
-                    if int(c1_2):
+                    if c1_2 == "1":
                         print(file_detail, lista_details)
                         lista_details = loadCSVFile(file_detail, tipo_lista)
-                        print("Datos cargados, " + str(lt.size(lista_details)) + " elementos cargados")
+                        print("Datos cargados, " +
+                              str(lt.size(lista_details)) + " elementos cargados")
 
             elif int(inputs[0]) == 2:  # opcion 2
                 """
@@ -206,15 +213,19 @@ def main():
                 else: print("La lista tiene ",lista['size']," elementos")
                 """
             elif int(inputs[0]) == 3:  # opcion 3
-                if lista_casting == None or lista_casting['size'] == 0:  # obtener la longitud de la lista
+                # obtener la longitud de la lista
+                if lista_casting == None or lista_casting['size'] == 0:
                     print("La lista esta vacía")
                 else:
                     criteria = input('Ingrese el criterio de búsqueda\n')
                     column = input('ingrese el nombre de la columna')
-                    counter = countElementsFilteredByColumn(criteria, column,
-                                                            lista_casting)  # filtrar una columna por criterio
-                    print("Coinciden ", counter, " elementos con el crtierio: ", criteria)
+                    counter = countElementsFilteredByColumn(
+                        criteria, column, lista_casting)  # filtrar una columna
+                    # por criterio
+                    print("Coinciden ", counter,
+                          " elementos con el crtierio: ", criteria)
             elif int(inputs[0]) == 4:  # opcion 4
+
                 """
                 if lista==None or lista['size']==0: #obtener la longitud de la lista
                     print("La lista esta vacía")
@@ -224,20 +235,25 @@ def main():
                     counter=countElementsByCriteria(criteria,0,lista)
                     print("Coinciden ",counter," elementos con el crtierio: '", criteria ,"' (en construcción ...)")
                 """
+
             elif int(inputs[0]) == 5:  # opcion 5
                 # obtener la longitud de la lista
-                if lista_details == None or lista_details['size'] == 0:
+                if lista_details is None or lista_details['size'] == 0:
                     print("La lista esta vacía")
                 else:
                     dict_ord = {"1": selectionSort, "2": insertionSort,
                                 "3": shellSort, "4": quickSort, "5": mergesort}
-                    col_orden = input("Desea ordenar por COUNT: 1 o por AVERAGE: 2")
-                    orden_str = input("Ingrese, si desea las mayores: 1 si desea las menores: 0 : ")
+                    col_orden = input(
+                        "Desea ordenar por AVERAGE: 1 o por COUNT: 2")
+                    orden_str = input(
+                        "Ingrese, si desea las mayores: 1 si desea las menores: 0 : ")
                     funcion_str = input("ingrese el tipo dde ordenamiento que quiere hacer \n"
                                         "select:1, Insert:2, Shell:3\n quick:4, merge: 5 :")
-                    n_rank = int(input("ingrese el numero de peliculas que quiere ver"))
+                    n_rank = int(
+                        input("ingrese el numero de peliculas que quiere ver"))
                     t1 = process_time()
                     funcion_orden = dict_ord[funcion_str]
+
                     if orden_str == "0":
                         def orden(x, y):
                             return x < y
@@ -251,13 +267,14 @@ def main():
                         column = "vote_count"
 
                     print("cargando")
-                    orderElementsByCriteria(funcion_orden, column, lista_details, orden)
+                    ordenada = orderElementsByCriteria(
+                        funcion_orden, column, lista_details, orden, n_rank)
 
                     counter = 0
-                    iterator = it.newIterator(lista_details)
+                    iterator = it.newIterator(ordenada)
                     while it.hasNext(iterator) and counter < n_rank:
                         element = it.next(iterator)
-                        print(element)
+                        print(element["id"], column, element[column])
                         counter += 1
 
                     t2 = process_time()
