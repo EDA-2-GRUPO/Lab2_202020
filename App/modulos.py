@@ -48,6 +48,7 @@ def operacion_iteracion(target, listfilter):
 
 
 def extraerColumsBycolumcriteria(lst, col_extaer="ALL", listfilter=None):
+    t1 = process_time()
     filtrada = lt.newList("ARRAY_LIST")
     iterador = it.newIterator(lst)
     filtro = False if listfilter is None else True
@@ -63,6 +64,8 @@ def extraerColumsBycolumcriteria(lst, col_extaer="ALL", listfilter=None):
                     fila[col] = element[col]
 
             lt.addLast(filtrada, fila)
+    t2 = process_time()
+    print("tiempo de finalizacion f1", t2 - t1)
 
     return filtrada
 
@@ -76,7 +79,7 @@ def buscar_xmitades_list_dict(dlist, colum, buscado: float):
     while not encontre and (n_top - n_low >= 0):
         n_nuevo = (n_top + n_low) // 2
         a_mirar = float(dlist[n_nuevo][colum])
-        print(n_nuevo,a_mirar,buscado)
+        print(n_nuevo, a_mirar, buscado)
         if a_mirar == buscado:
             element = dlist[n_nuevo]
             encontre = True
@@ -150,6 +153,49 @@ def orderElementsByCriteria(function, column: str, lst, orden, n_rank):
     ranking_ordenado = function(lst, less_funtionnat, n_rank)
 
     return ranking_ordenado
+
+
+def promedio_ADT(lst, column) -> float:
+    largo = lt.size(lst)
+    iterador = it.newIterator(lst)
+    suma = 0
+    prom = 0
+    if largo != 0:
+        while it.hasNext(iterador):
+            dato = float(it.next(iterador)[column])
+            suma += dato
+        prom = suma / largo
+
+    return prom
+
+
+def freq_ADT(lst, colum) -> dict:
+    conteo = {}
+    iterador = it.newIterator(lst)
+    while it.hasNext(iterador):
+        muestra = it.next(iterador)[colum]
+        if conteo.get(muestra) is None:
+            conteo[muestra] = 1
+        else:
+            conteo[muestra] += 1
+
+    freq_dato = {None: 0}
+    most = []
+    freq_max = 0
+    print("r1", conteo)
+    for dato, freq in conteo.items():
+        if freq > freq_max:
+            most = [dato]
+            freq_max = freq
+        elif freq == freq_max:
+            most.append(dato)
+
+    if len(most) == 1:
+        freq_dato = {most[0]: freq_max}
+    else:
+        freq_dato = {most: freq_max}
+
+    return freq_dato
 
 
 def countElementsFilteredByColumn(lst, listfilter):
