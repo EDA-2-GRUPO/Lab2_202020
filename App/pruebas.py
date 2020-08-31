@@ -1,40 +1,7 @@
-"""
- * Copyright 2020, Departamento de sistemas y Computación, Universidad de Los Andes
- * 
- * Contribución de:
- *
- * Cristian Camilo Castellanos
- *
- * Desarrolado para el curso ISIS1225 - Estructuras de Datos y Algoritmos
- *
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- """
-"""
-  Este módulo es una aplicación básica con un menú de opciones para cargar datos, contar elementos, y hacer búsquedas sobre una lista .
-"""
-
-# sorting
-
-# estructuras
 import config as cf
 from DataStructures import liststructure as list_a
 from time import process_time
 from DataStructures import listiterator as it
-from DataStructures import singlelinkedlist as sg
-from DataStructures import arraylist as ar
-from DataStructures import arraylistiterator as ai
 from ADT import list as lt
 import sys
 import csv
@@ -43,8 +10,6 @@ from Sorting.mergesort import mergesort
 from Sorting.quicksort import quickSort
 from Sorting.selectionsort import selectionSort_n_rank as selectionSort
 from Sorting.shellsort import shellSort
-
-
 
 def loadCSVFile(file, tipo_lista, sep=";"):
     """
@@ -77,8 +42,6 @@ def loadCSVFile(file, tipo_lista, sep=";"):
     t1_stop = process_time()  # tiempo final
     print("Tiempo de ejecución ", t1_stop - t1_start, " segundos")
     return lst
-
-
 def printMenu():
     """
     Imprime el menu de opciones
@@ -89,104 +52,8 @@ def printMenu():
     print("3- Contar elementos filtrados por palabra clave")
     print("4- Consultar elementos a partir de dos listas")
     print("5- Ranking de peliculas")
-    print("6- requerimiento 3")
-
     print("0- Salir")
 
-
-def countElementsFilteredByColumn(criteria, column, lst):
-    """
-    Retorna cuantos elementos coinciden con un criterio para una columna dada  
-    Args:
-        criteria:: str
-            Critero sobre el cual se va a contar la cantidad de apariciones
-        column
-            Columna del arreglo sobre la cual se debe realizar el conteo
-        list
-            Lista en la cual se realizará el conteo, debe estar inicializada
-    Return:
-        counter :: int
-            la cantidad de veces ue aparece un elemento con el criterio definido
-    """
-    if lst['size'] == 0:
-        print("La lista esta vacía")
-        return 0
-    else:
-        t1_start = process_time()  # tiempo inicial
-        counter = 0
-        iterator = it.newIterator(lst)
-        while it.hasNext(iterator):
-            element = it.next(iterator)
-            # filtrar por palabra clave
-            if criteria.lower() in element[column].lower():
-                counter += 1
-        t1_stop = process_time()  # tiempo final
-        print("Tiempo de ejecución ", t1_stop - t1_start, " segundos")
-    return counter
-
-
-def countElementsByCriteria(criteria, column, lst):
-    """
-    Retorna la cantidad de elementos que cumplen con un criterio para una columna dada
-    """
-    return 0
-
-
-def orderElementsByCriteria(function, column: str, lst, orden, n_rank):
-    """
-    Retorna una lista con cierta cantidad de elementos ordenados por el criterio
-    function:
-        funcion de ordenamiento
-    colum:
-        nombre de la columna por la que se quiere ordenar
-    lst:
-        Estructura de lista que contiene los datos
-    orden:
-        funcion que indica la comparacion entre elementos, ej: lambda x,y: x > y
-    despligue:
-        cantidad de datos a desplegar
-
-    return:
-    """
-
-    def less_funtionnat(element1, element2):
-        return orden(float(element1[column]), float(element2[column]))
-
-    ord = function(lst, less_funtionnat, n_rank)
-
-    return ord
-def lista_peliculas_asociadas_a_algo(lista:list, para, z):
-    a = lt.newList()
-    listait= it.newIterator(lista)
-    while it.hasNext(listait):
-        d=it.next(listait)
-        if d[para] == z:
-            lt.addLast(a,d["id"])                     
-    return a
-def busqueda_logaritmica(allar,lista):
-    mini=0
-    maxi=lt.size(lista)
-    x= int((mini+maxi)/2)
-    d = True  
-    while d:
-        x=int((mini+maxi)/2)
-        w=int(lista["elements"][x]["id"])
-        if w==allar:
-            return (lista["elements"][x]) 
-        elif allar>w:
-            mini = x+1
-        elif allar<w:
-            maxi= x-1
-def buscar_p(lista:list, lista2:list,names):
-    g=0
-    w =ar.newList() 
-    listait= it.newIterator(lista)
-    while it.hasNext(listait):
-      g+=1
-      d=int(it.next(listait))
-      x = busqueda_logaritmica(d, lista2)   
-      ar.addLast(w, ["P"+str(g)+"     ",str(names)+"     ",str(x["vote_average"])+"     ",str(x["vote_count"])+"     "])
-    return w  
 def main():
     """
     Método principal del programa, se encarga de manejar todos los metodos adicionales creados
@@ -206,20 +73,22 @@ def main():
         if len(inputs) > 0:
             if int(inputs[0]) == 1:  # opcion 1
                 file = "Data/Movies/SmallMoviesDetailsCleaned.csv"
-                tipo_lista = input("Ingrese el tipo de lista que quiere usar, 0 linked, 1 array: ")
+                tipo_lista = input(
+                    "Ingrese el tipo de lista que quiere usar, 0 linked, 1 array: ")
                 if tipo_lista == "1":
                     tipo_lista = "ARRAY_LIST"
                 if tipo_lista == "2":
                     tipo_lista = "SINGLE_LINKED"
                 valido = True
-                C1 = input("¿Que archivos desea cargar? 1: prueba, 2: completos")
+                C1 = input(
+                    "¿Que archivos desea cargar? 1: prueba, 2: completos")
                 if C1 == "1":
-                    file_detail = "Data/Movies/SmallMoviesDetailsCleaned.csv"
-                    file_cast = "Data/Movies/MoviesCastingRaw-small.csv"
+                    file_detail = "Data/Movies/test.csv"
+                    file_cast = "Data/Movies/test.csv"
 
                 elif int(C1) == 2:
-                    file_detail = "Data/Movies/AllMoviesDetailsCleaned.csv"
-                    file_cast = "Data/Movies/AllMoviesCastingRaw.csv"
+                    file_detail = "Data/Movies/test.csv"
+                    file_cast = "Data/Movies/test.csv"
                 else:
                     valido = False
                     print("Opcion invalida")
@@ -230,14 +99,18 @@ def main():
                         print(file_cast, lista_casting)
                         # llamar funcion cargar datos
                         lista_casting = loadCSVFile(file_cast, tipo_lista)
-                        
-                        print("Datos cargados, " +str(lt.size(lista_casting)) + " elementos cargados")
+                        print("Datos cargados, " +
+                              str(lt.size(lista_casting)) + " elementos cargados")
+                        print(lista_casting["elements"][1]["id"])
                         # llamar funcion cargar datos
                     c1_2 = input("Datos de la pelicula? 0 o 1: ")
                     if c1_2 == "1":
                         print(file_detail, lista_details)
                         lista_details = loadCSVFile(file_detail, tipo_lista)
-                        print("Datos cargados, " + str(lt.size(lista_details)) + " elementos cargados")
+                        print
+                        print("Datos cargados, " +
+                              str(lt.size(lista_details)) + " elementos cargados")
+                        print(lista_casting)
 
             elif int(inputs[0]) == 2:  # opcion 2
                 """
@@ -252,8 +125,7 @@ def main():
                 else:
                     criteria = input('Ingrese el criterio de búsqueda\n')
                     column = input('ingrese el nombre de la columna')
-                    counter = countElementsFilteredByColumn(
-                        criteria, column, lista_casting)  # filtrar una columna
+                    counter = countElementsFilteredByColumn(criteria, column, lista_casting)  # filtrar una columna
                     # por criterio
                     print("Coinciden ", counter,
                           " elementos con el crtierio: ", criteria)
@@ -312,28 +184,9 @@ def main():
 
                     t2 = process_time()
                     print("tiempo de finalizacion", t2 - t1)
-            elif int(inputs[0])==6:
-                z = input("Ingrese el nombre del director que quieres buscar:\n")
-                t1= process_time()
-                n = "director_name"
-                w = lista_peliculas_asociadas_a_algo(lista_casting, n, z)
-                g = buscar_p(w, lista_details,z)
-                print("Película, Director, vote_average, vote_count\n")
-                print("-----------------------------------------------------")  
-                listaa=ai.newIterator(g)
-                while ai.hasNext(listaa):
-                    d = ai.next(listaa)
-                    print(d)
-                t2 =process_time()
-                print(t2-t1)
-            elif int(inputs[0]) == 7:
-                z = input("Ingrese el genero que quiere buscar:\n")
-                n = "genres"
-                w = lista_peliculas_asociadas_a_algo(lista_details, n, z)
-                s = buscar_p(w)    
-                print(w)        
             elif int(inputs[0]) == 0:  # opcion 0, salir
                 sys.exit(0)
+
 
 if __name__ == "__main__":
     main()

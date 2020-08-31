@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  """
 
-
+import config as cf
 from DataStructures import arraylistiterator as ait
 from DataStructures import linkedlistiterator as lit
 
