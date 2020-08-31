@@ -71,7 +71,7 @@ def extraerColumsBycolumcriteria(lst, col_extaer="ALL", listfilter=None):
     return filtrada
 
 
-def buscar_xmitades_list_dict(dlist, colum, buscado: float):
+def buscar_xmitades_list_dict(dlist, colum, buscado: int):
     n_top = len(dlist)
     n_low = 0
     encontre = False
@@ -79,8 +79,8 @@ def buscar_xmitades_list_dict(dlist, colum, buscado: float):
 
     while not encontre and (n_top - n_low >= 0):
         n_nuevo = (n_top + n_low) // 2
-        a_mirar = dlist[n_nuevo][colum]
-        print(n_nuevo, a_mirar, buscado)
+        a_mirar = int(dlist[n_nuevo][colum])
+
         if a_mirar == buscado:
             element = dlist[n_nuevo]
             encontre = True
@@ -94,31 +94,32 @@ def buscar_xmitades_list_dict(dlist, colum, buscado: float):
 
 def Join_Extract_2_list_m_filter(col_gide, lst1, lst2, extract1="ALL", extract2="ALL", listFilter1=None,
                                  listFilter2=None):
+
+
     t1_t = process_time()
     all1 = True if extract1 == "ALL" else False
     all2 = True if extract2 == "ALL" else False
     filtered_1 = False if listFilter1 is None else True
     filtered_2 = False if listFilter2 is None else True
 
-    if lst2["type"] == "ARRAY_LIST":
-        array = True
-    else:
-        array = False
-        iterador2 = it.newIterator(lst2)
+    array = True
 
-    filtrada = lt.newList("ARRAY_LIST")
+    filtrated = lt.newList("ARRAY_LIST")
 
     if all1 and not filtered_1:
         pre_fil = lst1
     else:
         pre_fil = extraerColumsBycolumcriteria(lst1, extract1, listFilter1)
 
-    a_recorrer = lst2["elements"]
-    for i in range(1, lt.size(pre_fil)):
+    iterador1 = it.newIterator(pre_fil)
+    iterador2 = it.newIterator(lst2)
+
+    while it.hasNext(iterador1):
         t3 = process_time()
-        element1 = lt.getElement(pre_fil, i)
-        val_guide = element1[col_gide]
+        element1 = it.next(iterador1)
+        val_guide = int(element1[col_gide])
         if array:
+            a_recorrer = lst2["elements"]
             possible = buscar_xmitades_list_dict(a_recorrer, col_gide, val_guide)
         else:
             possible = None
@@ -126,6 +127,7 @@ def Join_Extract_2_list_m_filter(col_gide, lst1, lst2, extract1="ALL", extract2=
                 element2 = it.next(iterador2)
                 if element2[col_gide] == val_guide:
                     possible = element2
+                    break
 
         if not filtered_2 or operacion_iteracion(possible, listFilter2):
             fila = element1
@@ -135,14 +137,14 @@ def Join_Extract_2_list_m_filter(col_gide, lst1, lst2, extract1="ALL", extract2=
                 for col in extract2:
                     fila[col] = possible[col]
 
-            lt.addLast(filtrada, fila)
+            lt.addLast(filtrated, fila)
 
         t4 = process_time()
         print("la iteracion demoro: ", t4 - t3)
 
     t2_t = process_time()
     print("total 2 filt: ", t2_t - t1_t)
-    return filtrada
+    return filtrated
 
 
 def orderElementsByCriteria(function, column: str, lst, orden, n_rank):
@@ -197,7 +199,6 @@ def freq_ADT(lst, colum) -> dict:
     freq_dato = {None: 0}
     most = []
     freq_max = 0
-    print("r1", conteo)
     for dato, freq in conteo.items():
         if freq > freq_max:
             most = [dato]

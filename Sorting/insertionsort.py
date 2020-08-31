@@ -53,7 +53,7 @@ def insertion_rank_mod(lst, lessfunction, n_rank):
             else:
                 continua = False
 
-        if pos_rank < n_rank:
+        if pos_rank <= n_rank:
             lt.insertElement(rank, element, pos_rank)
             if lt.size(rank) > n_rank:
                 lt.removeLast(rank)
