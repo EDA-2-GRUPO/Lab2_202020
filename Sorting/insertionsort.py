@@ -44,19 +44,16 @@ def insertion_rank_mod(lst, lessfunction, n_rank):
     lt.addLast(rank, element)
 
     while it.hasNext(iterator_lst):
-        pos_rank = n_rank + 1
-        if lt.size(rank) < n_rank:
-            pos_rank = lt.size(rank) + 1
-        in_rank, continuo = False, True
+        pos_rank = lt.size(rank) + 1
+        continua = True
         element = it.next(iterator_lst)
-        while pos_rank > 1 and continuo:
+        while pos_rank > 1 and continua:
             if lessfunction(element, lt.getElement(rank, pos_rank - 1)):
-                in_rank = True
                 pos_rank -= 1
             else:
-                continuo = False
+                continua = False
 
-        if in_rank and (not continuo or pos_rank == 1):
+        if pos_rank <= n_rank:
             lt.insertElement(rank, element, pos_rank)
             if lt.size(rank) > n_rank:
                 lt.removeLast(rank)
@@ -64,4 +61,3 @@ def insertion_rank_mod(lst, lessfunction, n_rank):
 
     return rank
 
-lt.newList()
