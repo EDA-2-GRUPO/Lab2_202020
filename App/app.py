@@ -1,5 +1,6 @@
 from App.modulos import *
 from DataStructures import listiterator as it
+from Sorting.insertionsort import insertion_rank_mod
 from ADT import list as lt
 import config as cf
 import sys
@@ -38,11 +39,13 @@ def printMenu():
     Imprime el menu de opciones
     """
     print("\nBienvenido")
-    print("1- Cargar Datos")
-    print("2- Contar los elementos de la Lista")
-    print("3- Contar elementos filtrados por palabra clave")
-    print("4- Consultar elementos a partir de dos listas")
-    print("5- Ranking de peliculas")
+    print("q- Cargar Datos")
+    print("1- req1: Buenas peliculas por director")
+    print("2- req2: Ranking de peliculas")
+    print("3- req3: Conocer a un director")
+    print("4- req4: Conocer a un actor")
+    print("5- req5: Entender un genero")
+    print("6- req6: Ranking por genero")
     print("0- Salir")
 
 
@@ -81,100 +84,146 @@ def main():
                 if C1 == "1":
                     file_detail = "../Data/Movies/SmallMoviesDetailsCleaned.csv"
                     file_cast = "../Data/Movies/MoviesCastingRaw-small.csv"
-
                 elif C1 == "2":
                     file_detail = "../Data/Movies/AllMoviesDetailsCleaned.csv"
                     file_cast = "../Data/Movies/AllMoviesCastingRaw.csv"
-
                 else:
                     valido = False
                     print("Opcion invalida")
 
                 if valido:
-                    print(file_cast, lista_casting)
+                    print(file_cast)
                     # llamar funcion cargar datos
 
                     lista_casting = loadCSVFile(file_cast, tipo_lista)
                     print("Datos cargados, " + str(lt.size(lista_casting)) + " elementos cargados")
                     # llamar funcion cargar datos
-                    print(file_detail, lista_details)
+                    print(file_detail)
                     lista_details = loadCSVFile(file_detail, tipo_lista)
                     print("Datos cargados, " + str(lt.size(lista_details)) + " elementos cargados")
 
-            elif int(inputs[0]) == 1:  # opcion 2
+            elif int(inputs[0]) == 1:  # req1
                 director = input("ingrese el nombre del director")
+                t1 = process_time()
                 mayor_2 = lambda x, y: float(x) > y
-                global p1
+
                 p1 = Join_Extract_2_list_m_filter("id", lista_casting, lista_details, ["id", "director_name"],
                                                   ["original_title", "vote_count", "vote_average"],
                                                   [["director_name"], igual_str, director],
                                                   [["vote_average"], mayor_2, 6])
 
-            elif int(inputs[0]) == 3:  # opcion 3
-                # obtener la longitud de la lista
+                size_1 = lt.size(p1)
+                prom_1 = promedio_ADT(p1, "vote_average")
+
+                print("el director tiene {} peliculas buenas con un promedio de votacion de {}".format(size_1, prom_1))
+                t2 = process_time()
+                print("tiempo de finalizacion", t2 - t1)
+
+            elif int(inputs[0]) == 2:  # req2
+                #
                 if lista_casting == None or lista_casting['size'] == 0:
                     print("La lista esta vacía")
                 else:
-                    criteria = input('Ingrese el criterio de búsqueda\n')
-                    column = input('ingrese el nombre de la columna')
-                    counter = countElementsFilteredByColumn(
-                        criteria, column, lista_casting)  # filtrar una columna
-                    # por criterio
-                    print("Coinciden ", counter,
-                          " elementos con el crtierio: ", criteria)
-            elif int(inputs[0]) == 4:  # opcion 4
+                    ordenar_por = input("Si quiere ordenar por COUNT: 1, si AVERAGE:2")
+                    mayor_menor = input("Ordenar en ascendete: 1 si es desendente: 0 : ")
+                    n_rank = int(input("ingrese el numero de peliculas en el rank"))
 
-                """
-                if lista==None or lista['size']==0: #obtener la longitud de la lista
-                    print("La lista esta vacía")
+                    t1 = process_time()
+                    funcion_orden = insertion_rank_mod
+                    orden = menor if mayor_menor == "0" else mayor
+                    column = "vote_average" if ordenar_por == "1" else "vote_count"
 
-                else:
-                    criteria =input('Ingrese el criterio de búsqueda\n')
-                    counter=countElementsByCriteria(criteria,0,lista)
-                    print("Coinciden ",counter," elementos con el crtierio: '", criteria ,"' (en construcción ...)")
-                """
+                    print("cargando")
+                    ordenada = orderElementsByCriteria(funcion_orden, column, lista_details, orden, n_rank)
 
-            elif int(inputs[0]) == 5:  # opcion 5
+                    iterator = it.newIterator(ordenada)
+                    while it.hasNext(iterator):
+                        element = it.next(iterator)
+                        print(element["id"], column, element[column])
+
+                    t2 = process_time()
+                    print("tiempo de finalizacion", t2 - t1)
+
+            elif int(inputs[0]) == 3:  # req3
+                t1_3 = process_time()
+                director = input("ingrese el nombre del director")
+                p3 = Join_Extract_2_list_m_filter("id", lista_casting, lista_details, ["id", "director_name"],
+                                                  ["original_title", "vote_count", "vote_average"],
+                                                  [["director_name"], igual_str, director])
+
+                size_3 = lt.size(p3)
+                prom_3 = promedio_ADT(p3, "vote_average")
+
+                print("el director tiene {} peliculas con un promedio de votacion de {}".format(size_3, prom_3))
+                t2_3 = process_time()
+                print("tiempo r3", t2_3 - t1_3)
+
+            elif int(inputs[0]) == 4:  # req4
                 # obtener la longitud de la lista
                 if lista_details is None or lista_details['size'] == 0:
                     print("La lista esta vacía")
                 else:
-                    col_orden = input(
-                        "Desea ordenar por AVERAGE: 1 o por COUNT: 2")
-                    orden_str = input(
-                        "Ingrese, si desea las mayores: 1 si desea las menores: 0 : ")
-                    funcion_str = input("ingrese el tipo dde ordenamiento que quiere hacer \n"
-                                        "select:1, Insert:2, Shell:3\n quick:4, merge: 5 :")
-                    n_rank = int(
-                        input("ingrese el numero de peliculas que quiere ver"))
+                    actor = input("ingrese el nombre del actor")
                     t1 = process_time()
-                    funcion_orden = 3
-
-                    if orden_str == "0":
-                        def orden(x, y):
-                            return x < y
-                    else:
-                        def orden(x, y):
-                            return x > y
-
-                    if col_orden == "1":
-                        column = "vote_average"
-                    else:
-                        column = "vote_count"
-
-                    print("cargando")
-                    ordenada = orderElementsByCriteria(
-                        funcion_orden, column, lista_details, orden, n_rank)
-
-                    counter = 0
-                    iterator = it.newIterator(ordenada)
-                    while it.hasNext(iterator) and counter < n_rank:
-                        element = it.next(iterator)
-                        print(element["id"], column, element[column])
-                        counter += 1
-
+                    p4 = Join_Extract_2_list_m_filter("id", lista_casting, lista_details, ["id", "director_name"],
+                                                      ["original_title", "vote_count", "vote_average"],
+                                                      [["actor1_name", "actor2_name", "actor3_name", "actor4_name",
+                                                        "actor5_name"],
+                                                       igual_str, actor])
+                    size_4 = lt.size(p4)
+                    prom_4 = promedio_ADT(p4, "vote_average")
+                    director_mas = freq_ADT(p4, "director_name")
+                    print("El actor ha estado en {} peliculas con un promedio de votacion de {}".format(size_4, prom_4))
+                    print("{} ha participado principalmente con:\n{} ".format(actor, director_mas))
                     t2 = process_time()
                     print("tiempo de finalizacion", t2 - t1)
+
+            elif int(inputs[0]) == 5:  # req5
+                # obtener la longitud de la lista
+                if lista_details is None or lista_details['size'] == 0:
+                    print("La lista esta vacía")
+                else:
+                    genero = input("ingrese el nombre del genero cinematografico")
+                    p5 = extraerColumsBycolumcriteria(lista_details,
+                                                      ["genres", "original_title", "vote_count", "vote_average"],
+                                                      [["genres"], esta_al, genero])
+                    size_5 = lt.size(p5)
+                    prom_5 = promedio_ADT(p5, "vote_count")
+                    print(
+                        "Del genero {} hay {} peliculas con un promedio de votos de {}".format(genero, size_5, prom_5))
+
+            elif int(inputs[0]) == 6:  # req6
+
+                if lista_details is None or lista_details['size'] == 0:
+                    print("La lista esta vacía")
+                else:
+                    t1 = process_time()
+                    genero = input("ingrese el nombre del genero cinematografico")
+                    ordenar_por = input("Si quiere ordenar por COUNT: 1, si AVERAGE:2")
+                    mayor_menor = input("Ordenar en ascendete: 1 si es desendente: 0 : ")
+                    n_rank = int(input("ingrese el numero de peliculas en el rank"))
+
+
+                    t1 = process_time()
+                    funcion_orden = insertion_rank_mod
+                    orden = menor if mayor_menor == "0" else mayor
+                    column = "vote_average" if ordenar_por == "1" else "vote_count"
+
+                    print("cargando")
+
+                    p6 = extraerColumsBycolumcriteria(lista_details,
+                                                      ["genres", "original_title", "vote_count", "vote_average"],
+                                                      [["genres"], esta_al, genero])
+
+                    p6_rank = orderElementsByCriteria(funcion_orden,column,p6, orden, n_rank)
+                    prom_6 = promedio_ADT(p6_rank, column)
+
+                    print(
+                        "Del ranking {} el promedio de calificacion es {}".format(genero, prom_6))
+
+
+
+
             elif int(inputs[0]) == 0:  # opcion 0, salir
                 sys.exit(0)
 
