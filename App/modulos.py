@@ -7,7 +7,16 @@ import sys
 import os
 
 
-def loadCSVFile(file, tipo_lista, sep=";"):
+def cmpfunctionmovies(element1, element2):
+    if int(element1["id"]) == int(element2["id"]):
+        return 0
+    elif int(element1["id"]) < int(element2["id"]):
+        return -1
+    else:
+        return 1
+
+
+def loadCSVFile(file, tipo_lista, cmpfunction=None, sep=";"):
     """
     Carga un archivo csv a una lista
     Args:
@@ -22,7 +31,8 @@ def loadCSVFile(file, tipo_lista, sep=";"):
         Borra la lista e informa al usuario
     Returns: None
     """
-    lst = lt.newList(tipo_lista)  # Usando implementacion linkedlist
+      # Usando implementacion linkedlist
+    lst = lt.newList(tipo_lista,cmpfunction)
     print("Cargando archivo ....")
     t1_start = process_time()  # tiempo inicial
     dialect = csv.excel()
@@ -37,7 +47,7 @@ def loadCSVFile(file, tipo_lista, sep=";"):
         print("Hubo un error con la carga del archivo")
     t1_stop = process_time()  # tiempo final
     print("Tiempo de ejecución ", t1_stop - t1_start, " segundos")
-    return lst
+
 
 
 def operacion_iteracion(target, listfilter):
@@ -50,7 +60,8 @@ def operacion_iteracion(target, listfilter):
 
 def extraerColumsBycolumcriteria(lst, col_extaer="ALL", listfilter=None):
     t1 = process_time()
-    filtrada = lt.newList("ARRAY_LIST")
+    cmp = lst["cmpfunction"]
+    filtrada = lt.newList("ARRAY_LIST", cmp)
     iterador = it.newIterator(lst)
     filtro = False if listfilter is None else True
 
@@ -71,20 +82,21 @@ def extraerColumsBycolumcriteria(lst, col_extaer="ALL", listfilter=None):
     return filtrada
 
 
-def buscar_xmitades_list_dict(dlist, colum, buscado: int):
-    n_top = len(dlist)
-    n_low = 0
+def buscar_xmitades_list_dict_ADT_ARRAY(target, lst):
+    n_top = lt.size(lst) + 1
+    n_low = 1
+    cmp = lst["cmpfunction"]
     encontre = False
     element = None
 
     while not encontre and (n_top - n_low >= 0):
         n_nuevo = (n_top + n_low) // 2
-        a_mirar = int(dlist[n_nuevo][colum])
-
-        if a_mirar == buscado:
-            element = dlist[n_nuevo]
+        a_mirar = lt.getElement(lst, n_nuevo)
+        comparacion = cmp(target, a_mirar)
+        if comparacion == 0:
+            element = a_mirar
             encontre = True
-        elif a_mirar > buscado:
+        elif comparacion == -1:
             n_top = n_nuevo - 1
         else:
             n_low = n_nuevo + 1
@@ -94,22 +106,20 @@ def buscar_xmitades_list_dict(dlist, colum, buscado: int):
 
 def Join_Extract_2_list_m_filter(col_gide, lst1, lst2, extract1="ALL", extract2="ALL", listFilter1=None,
                                  listFilter2=None):
-
-
     t1_t = process_time()
-    all1 = True if extract1 == "ALL" else False
+
     all2 = True if extract2 == "ALL" else False
-    filtered_1 = False if listFilter1 is None else True
     filtered_2 = False if listFilter2 is None else True
+    cmp = lst1["cmpfunction"]
 
     array = True
 
-    filtrated = lt.newList("ARRAY_LIST")
+    filtrated = lt.newList("ARRAY_LIST", cmp)
 
-    if all1 and not filtered_1:
+    if extract1 == "ALL" and listFilter1 is None:
         pre_fil = lst1
     else:
-        pre_fil = extraerColumsBycolumcriteria(lst1, extract1, listFilter1)
+        pre_fil = extraerColumsBycolumcriteria(lst1, [col_gide] + extract1, listFilter1)
 
     iterador1 = it.newIterator(pre_fil)
     iterador2 = it.newIterator(lst2)
@@ -119,8 +129,7 @@ def Join_Extract_2_list_m_filter(col_gide, lst1, lst2, extract1="ALL", extract2=
         element1 = it.next(iterador1)
         val_guide = int(element1[col_gide])
         if array:
-            a_recorrer = lst2["elements"]
-            possible = buscar_xmitades_list_dict(a_recorrer, col_gide, val_guide)
+            possible = buscar_xmitades_list_dict_ADT_ARRAY(element1, lst2)
         else:
             possible = None
             while it.hasNext(iterador2):
@@ -196,20 +205,17 @@ def freq_ADT(lst, colum) -> dict:
         else:
             conteo[muestra] += 1
 
-    freq_dato = {None: 0}
+    freq_dato = {"director": None, "veces": 0}
     most = []
     freq_max = 0
     for dato, freq in conteo.items():
         if freq > freq_max:
-            most = [dato]
+            freq_dato["director"] = [dato]
             freq_max = freq
         elif freq == freq_max:
             most.append(dato)
 
-    if len(most) == 1:
-        freq_dato = {most[0]: freq_max}
-    else:
-        freq_dato = {most: freq_max}
+    freq_dato["veces"] = freq_max
 
     return freq_dato
 
