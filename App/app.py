@@ -5,6 +5,7 @@ from ADT import list as lt
 import config as cf
 import sys
 import os
+import multiprocessing as mp
 
 """
  * Copyright 2020, Departamento de sistemas y Computación, Universidad de Los Andes
@@ -57,10 +58,7 @@ def main():
     Return: None 
     """
 
-    lista_casting = lt.newList()  # se require usar lista definida
-    lista_details = lt.newList()
-
-    igual_str = lambda x, y: x == y
+    igual_str = lambda x, y: x.lower() == y.lower()
     esta_al = lambda x, y: y in x
     mayor = lambda x, y: float(x) > float(y)
     menor = lambda x, y: float(x) < float(y)
@@ -90,22 +88,26 @@ def main():
                     print("Opcion invalida")
 
                 if valido:
+                    t1 = process_time()
+
+                    lista_casting = loadCSVFile(file_cast, tipo_lista, cmpfunctionmovies)
                     print(file_cast)
                     # llamar funcion cargar datos
-
-                    lista_casting = loadCSVFile(file_cast, tipo_lista)
                     print("Datos cargados, " + str(lt.size(lista_casting)) + " elementos cargados")
+                    lista_details = loadCSVFile(file_detail, tipo_lista, cmpfunctionmovies)
                     # llamar funcion cargar datos
                     print(file_detail)
-                    lista_details = loadCSVFile(file_detail, tipo_lista)
                     print("Datos cargados, " + str(lt.size(lista_details)) + " elementos cargados")
 
+                    t2 = process_time()
+
+                    print("tiempo de carga", t2 - t1)
             elif int(inputs[0]) == 1:  # req1
                 director = input("ingrese el nombre del director")
                 t1 = process_time()
                 mayor_2 = lambda x, y: float(x) > y
 
-                p1 = Join_Extract_2_list_m_filter("id", lista_casting, lista_details, ["id", "director_name"],
+                p1 = Join_Extract_2_list_m_filter("id", lista_casting, lista_details, ["director_name"],
                                                   ["original_title", "vote_count", "vote_average"],
                                                   [["director_name"], igual_str, director],
                                                   [["vote_average"], mayor_2, 6])
@@ -145,7 +147,7 @@ def main():
             elif int(inputs[0]) == 3:  # req3
                 t1_3 = process_time()
                 director = input("ingrese el nombre del director")
-                p3 = Join_Extract_2_list_m_filter("id", lista_casting, lista_details, ["id", "director_name"],
+                p3 = Join_Extract_2_list_m_filter("id", lista_casting, lista_details, ["director_name"],
                                                   ["original_title", "vote_count", "vote_average"],
                                                   [["director_name"], igual_str, director])
 
@@ -163,7 +165,7 @@ def main():
                 else:
                     actor = input("ingrese el nombre del actor")
                     t1 = process_time()
-                    p4 = Join_Extract_2_list_m_filter("id", lista_casting, lista_details, ["id", "director_name"],
+                    p4 = Join_Extract_2_list_m_filter("id", lista_casting, lista_details, ["director_name"],
                                                       ["original_title", "vote_count", "vote_average"],
                                                       [["actor1_name", "actor2_name", "actor3_name", "actor4_name",
                                                         "actor5_name"],
