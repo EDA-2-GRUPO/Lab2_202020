@@ -27,6 +27,7 @@ def loadCSVFile(file, tipo_lista, sep=";"):
     t1_start = process_time()  # tiempo inicial
     dialect = csv.excel()
     dialect.delimiter = sep
+
     try:
         with open(file, encoding="utf-8-sig") as csvfile:
             spamreader = csv.DictReader(csvfile, dialect=dialect)
@@ -78,7 +79,7 @@ def buscar_xmitades_list_dict(dlist, colum, buscado: float):
 
     while not encontre and (n_top - n_low >= 0):
         n_nuevo = (n_top + n_low) // 2
-        a_mirar = float(dlist[n_nuevo][colum])
+        a_mirar = dlist[n_nuevo][colum]
         print(n_nuevo, a_mirar, buscado)
         if a_mirar == buscado:
             element = dlist[n_nuevo]
@@ -99,6 +100,12 @@ def Join_Extract_2_list_m_filter(col_gide, lst1, lst2, extract1="ALL", extract2=
     filtered_1 = False if listFilter1 is None else True
     filtered_2 = False if listFilter2 is None else True
 
+    if lst2["type"] == "ARRAY_LIST":
+        array = True
+    else:
+        array = False
+        iterador2 = it.newIterator(lst2)
+
     filtrada = lt.newList("ARRAY_LIST")
 
     if all1 and not filtered_1:
@@ -110,8 +117,16 @@ def Join_Extract_2_list_m_filter(col_gide, lst1, lst2, extract1="ALL", extract2=
     for i in range(1, lt.size(pre_fil)):
         t3 = process_time()
         element1 = lt.getElement(pre_fil, i)
-        val_guide = float(element1[col_gide])
-        possible = buscar_xmitades_list_dict(a_recorrer, col_gide, val_guide)
+        val_guide = element1[col_gide]
+        if array:
+            possible = buscar_xmitades_list_dict(a_recorrer, col_gide, val_guide)
+        else:
+            possible = None
+            while it.hasNext(iterador2):
+                element2 = it.next(iterador2)
+                if element2[col_gide] == val_guide:
+                    possible = element2
+
         if not filtered_2 or operacion_iteracion(possible, listFilter2):
             fila = element1
             if all2:

@@ -29,9 +29,8 @@ import os
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  """
-"""
-  Este módulo es una aplicación básica con un menú de opciones para cargar datos, contar elementos, y hacer búsquedas sobre una lista .
-"""
+"""Este módulo es una aplicación básica con un menú de opciones para cargar datos, contar elementos, 
+y hacer búsquedas sobre una lista . """
 
 
 def printMenu():
@@ -57,8 +56,7 @@ def main():
     Args: None
     Return: None 
     """
-    global lista_casting
-    global lista_details
+
     lista_casting = lt.newList()  # se require usar lista definida
     lista_details = lt.newList()
 
@@ -121,7 +119,7 @@ def main():
 
             elif int(inputs[0]) == 2:  # req2
                 #
-                if lista_casting == None or lista_casting['size'] == 0:
+                if lista_casting['size'] == 0 or lista_details['size'] == 0:
                     print("La lista esta vacía")
                 else:
                     ordenar_por = input("Si quiere ordenar por COUNT: 1, si AVERAGE:2")
@@ -197,12 +195,10 @@ def main():
                 if lista_details is None or lista_details['size'] == 0:
                     print("La lista esta vacía")
                 else:
-                    t1 = process_time()
                     genero = input("ingrese el nombre del genero cinematografico")
                     ordenar_por = input("Si quiere ordenar por COUNT: 1, si AVERAGE:2")
                     mayor_menor = input("Ordenar en ascendete: 1 si es desendente: 0 : ")
                     n_rank = int(input("ingrese el numero de peliculas en el rank"))
-
 
                     t1 = process_time()
                     funcion_orden = insertion_rank_mod
@@ -215,14 +211,13 @@ def main():
                                                       ["genres", "original_title", "vote_count", "vote_average"],
                                                       [["genres"], esta_al, genero])
 
-                    p6_rank = orderElementsByCriteria(funcion_orden,column,p6, orden, n_rank)
+                    p6_rank = orderElementsByCriteria(funcion_orden, column, p6, orden, n_rank)
                     prom_6 = promedio_ADT(p6_rank, column)
 
                     print(
                         "Del ranking {} el promedio de calificacion es {}".format(genero, prom_6))
-
-
-
+                    t2 = process_time()
+                    print("Tiempo de ejecucion", t2 - t1)
 
             elif int(inputs[0]) == 0:  # opcion 0, salir
                 sys.exit(0)
