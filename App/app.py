@@ -180,7 +180,8 @@ def busqueda_logaritmica(allar,lista):
 def buscar_p(lista:list, lista2:list,names):
     l=0
     g=0
-    w =ar.newList() 
+    w =lt.newList("ARRAY_LIST")
+    p =lt.newList("ARRAY_LIST") 
     listait= it.newIterator(lista)
     while it.hasNext(listait):
       g+=1
@@ -188,7 +189,10 @@ def buscar_p(lista:list, lista2:list,names):
       x = busqueda_logaritmica(d, lista2)   
       l+=float(x["vote_average"])
       ar.addLast(w, ["P"+str(g)+"     ",str(names)+"     ",str(x["vote_average"])+"     ",str(x["vote_count"])+"     "])
-    return [w,g,round(l/g,2)]
+    lt.addLast(p,w)
+    lt.addLast(p,g)
+    lt.addLast(p,round(l/g,2))
+    return p
 def main():
     """
     Método principal del programa, se encarga de manejar todos los metodos adicionales creados
@@ -322,12 +326,13 @@ def main():
                 g = buscar_p(w, lista_details,z)
                 print("Película, Director, vote_average, vote_count\n")
                 print("-----------------------------------------------------")  
-                listaa=ai.newIterator(g[0])
-                while ai.hasNext(listaa):
-                    d = ai.next(listaa)
+                listaa=it.newIterator(lt.getElement(g, 1))
+                print(listaa)
+                while it.hasNext(listaa):
+                    d = it.next(listaa)
                     print(d)
-                print("Numero de Películas:"+str(g[1]))
-                print("Promedio Películas (vote_average):"+str(g[2]))
+                print("Numero de Películas:"+str(lt.getElement(g, 2)))
+                print("Promedio Películas (vote_average):"+str(lt.getElement(g, 0)))
                 t2 =process_time()
                 print(t2-t1)
             elif int(inputs[0]) == 7:
