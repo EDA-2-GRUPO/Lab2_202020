@@ -327,7 +327,6 @@ def main():
                 print("Película, Director, vote_average, vote_count\n")
                 print("-----------------------------------------------------")  
                 listaa=it.newIterator(lt.getElement(g, 1))
-                print(listaa)
                 while it.hasNext(listaa):
                     d = it.next(listaa)
                     print(d)
