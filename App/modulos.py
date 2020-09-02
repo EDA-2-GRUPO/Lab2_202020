@@ -57,6 +57,9 @@ def operacion_iteracion(target, col_evaluacion, operacion, criterio):
             return True
     return False
 
+def operacion_simple(target, col_evaluacion, operacion, criterio):
+    return operacion(target[col_evaluacion],criterio)
+
 
 def extraerColumsBycolumcriteria(lst, col_extaer="ALL", listfilter=None):
     t1 = process_time()
@@ -71,9 +74,14 @@ def extraerColumsBycolumcriteria(lst, col_extaer="ALL", listfilter=None):
     else:
         paso = False
         col_evaluacion, operacion, criterio = listfilter
+        if len(col_evaluacion) == 1:
+            col_evaluacion = col_evaluacion[0]
+            operacion_ = operacion_simple
+        else:
+            operacion_ = operacion_iteracion
 
     def iteracion():
-        if paso or operacion_iteracion(element, col_evaluacion, operacion, criterio):
+        if paso or operacion_(element, col_evaluacion, operacion, criterio):
             if all:
                 fila = element
             else:
