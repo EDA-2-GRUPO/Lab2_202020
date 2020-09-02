@@ -131,7 +131,8 @@ def main():
                     t1 = process_time()
                     funcion_orden = insertion_rank_mod
                     orden = menor if mayor_menor == "0" else mayor
-                    column = "vote_average" if ordenar_por == "1" else "vote_count"
+                    column = "vote_average" if ordenar_por == "2" else "vote_count"
+
 
                     print("cargando")
                     ordenada = orderElementsByCriteria(funcion_orden, column, lista_details, orden, n_rank)
@@ -205,7 +206,7 @@ def main():
                     t1 = process_time()
                     funcion_orden = insertion_rank_mod
                     orden = menor if mayor_menor == "0" else mayor
-                    column = "vote_average" if ordenar_por == "1" else "vote_count"
+                    column = "vote_average" if ordenar_por == "2" else "vote_count"
 
                     print("cargando")
 
