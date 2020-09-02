@@ -201,6 +201,12 @@ def main():
                                                       [["genres"], esta_al, genero])
                     size_5 = lt.size(p5)
                     prom_5 = promedio_ADT(p5, "vote_count")
+                    litair = it.newIterator(p5)
+                    l=0
+                    while it.hasNext(litair):
+                       l +=1
+                       w = it.next(litair)
+                       print("P"+str(l)+"   "+","+str(w["genres"])+","+str(w["vote_count"]))
                     print(
                         "Del genero {} hay {} peliculas con un promedio de votos de {}".format(genero, size_5, prom_5))
 
