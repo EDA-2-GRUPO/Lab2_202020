@@ -80,11 +80,11 @@ def main():
                 valido = True
                 C1 = input("¿Que archivos desea cargar? 1: prueba, 2: completos")
                 if C1 == "1":
-                    file_detail = "Data/Movies/SmallMoviesDetailsCleaned.csv"
-                    file_cast = "Data/Movies/MoviesCastingRaw-small.csv"
+                    file_detail = "Data/theMoviesdb/SmallMoviesDetailsCleaned.csv"
+                    file_cast = "Data/theMoviesdb/MoviesCastingRaw-small.csv"
                 elif C1 == "2":
-                    file_detail = "Data/Movies/AllMoviesDetailsCleaned.csv"
-                    file_cast = "Data/Movies/AllMoviesCastingRaw.csv"
+                    file_detail = "Data/theMoviesdb/AllMoviesDetailsCleaned.csv"
+                    file_cast = "Data/theMoviesdb/AllMoviesCastingRaw.csv"
                 else:
                     valido = False
                     print("Opcion invalida")
@@ -185,8 +185,17 @@ def main():
                     size_4 = lt.size(p4)
                     prom_4 = promedio_ADT(p4, "vote_average")
                     director_mas = freq_ADT(p4, "director_name")
-                    print("El actor ha estado en {} peliculas con un promedio de votacion de {}".format(size_4, prom_4))
-                    print("{} ha participado principalmente con:\n{} ".format(actor, director_mas))
+                    print('Pelicula,    Director,    vote_average')
+                    print('-----------------------------------------------')
+                    iterador = it.newIterator(p4)
+                    cant_p = 0
+                    while it.hasNext(iterador):
+                        cant_p += 1
+                        i = it.next(iterador)
+                        print('P'+str(cant_p)+','+'    '+str(i['director_name'])+','+'    '+str(i['vote_average']))
+                    print("Numero de Peliculas "+str(size_4))
+                    print("Promedio Peliculas (vote_average): "+str(round(prom_4,2)))
+                    print('Director con más colaboraciones: '+str(director_mas['director']))
                     t2 = process_time()
                     print("tiempo de finalizacion", t2 - t1)
 
