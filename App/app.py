@@ -80,11 +80,11 @@ def main():
                 valido = True
                 C1 = input("¿Que archivos desea cargar? 1: prueba, 2: completos")
                 if C1 == "1":
-                    file_detail = "../Data/Movies/SmallMoviesDetailsCleaned.csv"
-                    file_cast = "../Data/Movies/MoviesCastingRaw-small.csv"
+                    file_detail = "Data/Movies/SmallMoviesDetailsCleaned.csv"
+                    file_cast = "Data/Movies/MoviesCastingRaw-small.csv"
                 elif C1 == "2":
-                    file_detail = "../Data/Movies/AllMoviesDetailsCleaned.csv"
-                    file_cast = "../Data/Movies/AllMoviesCastingRaw.csv"
+                    file_detail = "Data/Movies/AllMoviesDetailsCleaned.csv"
+                    file_cast = "Data/Movies/AllMoviesCastingRaw.csv"
                 else:
                     valido = False
                     print("Opcion invalida")
@@ -134,14 +134,16 @@ def main():
                     funcion_orden = insertion_rank_mod
                     orden = menor if mayor_menor == "0" else mayor
                     column = "vote_average" if ordenar_por == "2" else "vote_count"
-
                     print("cargando")
                     ordenada = orderElementsByCriteria(funcion_orden, column, lista_details, orden, n_rank)
-
+                    print("Las 10 Películas más("+str(column)+") votadas("+str(ordenar_por)+")")
+                    print("Película, Director, vote_average, vote_count")
                     iterator = it.newIterator(ordenada)
+                    w = 0
                     while it.hasNext(iterator):
+                        w+=1
                         element = it.next(iterator)
-                        print(element["id"], column, element[column])
+                        print("P"+str(w)+"  ", element["title"], element["vote_average"],  element["vote_count"])
 
                     t2 = process_time()
                     print("tiempo de finalizacion", t2 - t1)
@@ -156,6 +158,14 @@ def main():
                 size_3 = lt.size(p3)
                 prom_3 = promedio_ADT(p3, "vote_average")
 
+                print("Película, Director, vote_average, vote_count")
+                print("-----------------------------------------------------")
+                l = 0
+                litair = it.newIterator(p3)
+                while it.hasNext(litair):
+                    l +=1
+                    w = it.next(litair)
+                    print("P"+str(l)+"   "+","+str(w['director_name'])+","+str(w["vote_average"])+","+str(w["vote_count"]))
                 print("el director tiene {} peliculas con un promedio de votacion de {}".format(size_3, prom_3))
                 t2_3 = process_time()
                 print("tiempo r3", t2_3 - t1_3)
@@ -217,7 +227,12 @@ def main():
 
                     p6_rank = orderElementsByCriteria(funcion_orden, column, p6, orden, n_rank)
                     prom_6 = promedio_ADT(p6_rank, column)
-
+                    litair = it.newIterator(p6)
+                    l=0
+                    while it.hasNext(litair):
+                       l +=1
+                       w = it.next(litair)
+                       print("P"+str(l)+"   "+","+str(w['genres'])+","+str(w["vote_average"])+","+str(w["vote_count"]))
                     print(
                         "Del ranking {} el promedio de calificacion es {}".format(genero, prom_6))
                     t2 = process_time()
