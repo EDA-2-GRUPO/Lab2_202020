@@ -48,6 +48,8 @@ def loadCSVFile(file, tipo_lista, cmpfunction=None, sep=";"):
     t1_stop = process_time()  # tiempo final
     print("Tiempo de ejecución ", t1_stop - t1_start, " segundos")
 
+    return lst
+
 
 
 def operacion_iteracion(target, listfilter):
@@ -141,7 +143,7 @@ def Join_Extract_2_list_m_filter(col_gide, lst1, lst2, extract1="ALL", extract2=
         if not filtered_2 or operacion_iteracion(possible, listFilter2):
             fila = element1
             if all2:
-                fila.append(possible)
+                fila.update(possible)
             else:
                 for col in extract2:
                     fila[col] = possible[col]
