@@ -1,11 +1,10 @@
+import config as cf
+import sys
+import os
 from App.modulos import *
 from DataStructures import listiterator as it
 from Sorting.insertionsort import insertion_rank_mod
 from ADT import list as lt
-import config as cf
-import sys
-import os
-import multiprocessing as mp
 
 """
  * Copyright 2020, Departamento de sistemas y Computación, Universidad de Los Andes
@@ -57,11 +56,14 @@ def main():
     Args: None
     Return: None 
     """
+    lista_casting = lt.newList()
+    lista_details = lt.newList()
 
-    igual_str = lambda x, y: x.lower() == y.lower()
-    esta_al = lambda x, y: y in x
-    mayor = lambda x, y: float(x) > float(y)
-    menor = lambda x, y: float(x) < float(y)
+    def igual_str(x, y): return x.lower() == y.lower()
+    def esta_al(x, y): return y in x
+    def mayor(x, y): return float(x) > float(y)
+    def menor(x, y): return float(x) < float(y)
+
     while True:
 
         printMenu()  # imprimir el menu de opciones en consola
@@ -105,7 +107,7 @@ def main():
             elif int(inputs[0]) == 1:  # req1
                 director = input("ingrese el nombre del director")
                 t1 = process_time()
-                mayor_2 = lambda x, y: float(x) > y
+                def mayor_2(x, y): return float(x) > y
 
                 p1 = Join_Extract_2_list_m_filter("id", lista_casting, lista_details, ["director_name"],
                                                   ["original_title", "vote_count", "vote_average"],
@@ -132,7 +134,6 @@ def main():
                     funcion_orden = insertion_rank_mod
                     orden = menor if mayor_menor == "0" else mayor
                     column = "vote_average" if ordenar_por == "2" else "vote_count"
-
 
                     print("cargando")
                     ordenada = orderElementsByCriteria(funcion_orden, column, lista_details, orden, n_rank)
