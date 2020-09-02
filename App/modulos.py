@@ -31,8 +31,8 @@ def loadCSVFile(file, tipo_lista, cmpfunction=None, sep=";"):
         Borra la lista e informa al usuario
     Returns: None
     """
-      # Usando implementacion linkedlist
-    lst = lt.newList(tipo_lista,cmpfunction)
+    # Usando implementacion linkedlist
+    lst = lt.newList(tipo_lista, cmpfunction)
     print("Cargando archivo ....")
     t1_start = process_time()  # tiempo inicial
     dialect = csv.excel()
@@ -51,9 +51,7 @@ def loadCSVFile(file, tipo_lista, cmpfunction=None, sep=";"):
     return lst
 
 
-
-def operacion_iteracion(target, listfilter):
-    col_evaluacion, operacion, criterio = listfilter
+def operacion_iteracion(target, col_evaluacion, operacion, criterio):
     for col in col_evaluacion:
         if operacion(target[col], criterio):
             return True
@@ -62,22 +60,40 @@ def operacion_iteracion(target, listfilter):
 
 def extraerColumsBycolumcriteria(lst, col_extaer="ALL", listfilter=None):
     t1 = process_time()
+
     cmp = lst["cmpfunction"]
     filtrada = lt.newList("ARRAY_LIST", cmp)
-    iterador = it.newIterator(lst)
-    filtro = False if listfilter is None else True
+    array = True if lst["type"] == "ARRAY_LIST" else False
+    all = True if col_extaer == "ALL" else False
 
-    while it.hasNext(iterador):
-        element = it.next(iterador)
-        if not filtro or operacion_iteracion(element, listfilter):
-            fila = {}
-            if col_extaer == "ALL":
+    if listfilter is None:
+        paso = True
+    else:
+        paso = False
+        col_evaluacion, operacion, criterio = listfilter
+
+    def iteracion():
+        if paso or operacion_iteracion(element, col_evaluacion, operacion, criterio):
+            if all:
                 fila = element
             else:
+                fila = {}
                 for col in col_extaer:
                     fila[col] = element[col]
 
             lt.addLast(filtrada, fila)
+
+    if array:
+        largo = lt.size(lst) + 1
+        for i in range(1, largo):
+            element = lt.getElement(lst, i)
+            iteracion()
+    else:
+        iterador = it.newIterator(lst)
+        while it.hasNext(iterador):
+            element = it.next(iterador)
+            iteracion()
+
     t2 = process_time()
     print("tiempo de finalizacion f1", t2 - t1)
 
@@ -110,48 +126,76 @@ def Join_Extract_2_list_m_filter(col_gide, lst1, lst2, extract1="ALL", extract2=
                                  listFilter2=None):
     t1_t = process_time()
 
+    all1 = True if extract1 == "ALL" else False
     all2 = True if extract2 == "ALL" else False
-    filtered_2 = False if listFilter2 is None else True
     cmp = lst1["cmpfunction"]
-
-    array = True
-
+    array2 = True if lst2["type"] == "ARRAY_LIST" else False
     filtrated = lt.newList("ARRAY_LIST", cmp)
 
-    if extract1 == "ALL" and listFilter1 is None:
-        pre_fil = lst1
+    if listFilter2 is None:
+        paso2 = True
     else:
-        pre_fil = extraerColumsBycolumcriteria(lst1, [col_gide] + extract1, listFilter1)
+        col_evaluacion2, operacion2, criterio2 = listFilter2
+        paso2 = True
+
+    if listFilter1 is None:
+        pre_fil = lst1
+    elif array2:
+        pre_fil = extraerColumsBycolumcriteria(lst1, [col_gide], listFilter1)
+    else:
+        pre_fil = extraerColumsBycolumcriteria(lst1, "ALL", listFilter1)
+
+    pre_array1 = True if pre_fil["type"] == "ARRAY_LIST" else False
 
     iterador1 = it.newIterator(pre_fil)
     iterador2 = it.newIterator(lst2)
 
-    while it.hasNext(iterador1):
-        t3 = process_time()
-        element1 = it.next(iterador1)
-        val_guide = int(element1[col_gide])
-        if array:
-            possible = buscar_xmitades_list_dict_ADT_ARRAY(element1, lst2)
+    largo = lt.size(pre_fil) + 1
+
+    for i in range(1, largo):
+        #t3 = process_time()
+        if pre_array1:
+            p_el = lt.getElement(pre_fil, i)
         else:
-            possible = None
+            p_el = it.next(iterador1)
+
+        val_guide = p_el[col_gide]
+        if array2:
+            possible2 = buscar_xmitades_list_dict_ADT_ARRAY(p_el, lst2)
+            if possible2 is None:
+                continue
+            if paso2 or operacion_iteracion(possible2, col_evaluacion2, operacion2, criterio2):
+                element2 = possible2
+                element1 = buscar_xmitades_list_dict_ADT_ARRAY(p_el, lst1)
+            else:
+                continue
+        else:
+            coincide = False
             while it.hasNext(iterador2):
                 element2 = it.next(iterador2)
                 if element2[col_gide] == val_guide:
-                    possible = element2
+                    coincide = True
                     break
-
-        if not filtered_2 or operacion_iteracion(possible, listFilter2):
-            fila = element1
-            if all2:
-                fila.update(possible)
+            if not coincide or (not paso2 and not operacion_iteracion(element2, col_evaluacion2, operacion2, criterio2)):
+                continue
             else:
-                for col in extract2:
-                    fila[col] = possible[col]
+                element1 = p_el
 
-            lt.addLast(filtrated, fila)
+        fila = {}
+        if all1:
+            fila = element1
+        else:
+            for col in extract1:
+                fila[col] = element1[col]
+        if all2:
+            fila.update(element2)
+        else:
+            for col in extract2:
+                fila[col] = element2[col]
 
-        t4 = process_time()
-        print("la iteracion demoro: ", t4 - t3)
+        lt.addLast(filtrated, fila)
+        #t4 = process_time()
+        #print("la iteracion demoro: ", t4 - t3)
 
     t2_t = process_time()
     print("total 2 filt: ", t2_t - t1_t)

@@ -36,17 +36,15 @@ def insertionSort(lst, lessfunction):
 
 
 def insertion_rank_mod(lst, lessfunction, n_rank):
-    pos_list = 1
     rank = lt.newList('ARRAY_LIST')
-
+    largo = lt.size(lst) + 1
     iterator_lst = it.newIterator(lst)
     element = it.next(iterator_lst)
     lt.addLast(rank, element)
 
-    while it.hasNext(iterator_lst):
+    def ubicacion():
         pos_rank = lt.size(rank) + 1
         continua = True
-        element = it.next(iterator_lst)
         while pos_rank > 1 and continua:
             if lessfunction(element, lt.getElement(rank, pos_rank - 1)):
                 pos_rank -= 1
@@ -57,7 +55,14 @@ def insertion_rank_mod(lst, lessfunction, n_rank):
             lt.insertElement(rank, element, pos_rank)
             if lt.size(rank) > n_rank:
                 lt.removeLast(rank)
-        pos_list += 1
+
+    if lst["type"] == "ARRAY_LIST":
+        for i in range(1, largo):
+            element = lt.getElement(lst, i)
+            ubicacion()
+    else:
+        while it.hasNext(iterator_lst):
+            element = it.next(iterator_lst)
+            ubicacion()
 
     return rank
-
